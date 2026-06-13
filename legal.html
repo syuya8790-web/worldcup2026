@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>サイト情報｜Watch杯</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=3">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#bc002d">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Watch杯">
+</head>
+<body>
+
+<main class="wrap">
+  <h1 class="pagehead">サイト情報</h1>
+
+  <div class="card" id="about">
+    <div style="font-size:14px;font-weight:900;margin-bottom:6px">運営者情報</div>
+    <div style="font-size:13px;color:var(--ink-2);line-height:1.8">本サイトは個人運営の非公式ファンサイトです。FIFA・JFAおよび各放送局とは一切関係ありません。</div>
+  </div>
+  <div class="card" id="disclaimer">
+    <div style="font-size:14px;font-weight:900;margin-bottom:6px">免責事項</div>
+    <div style="font-size:13px;color:var(--ink-2);line-height:1.8">掲載している日程・放送予定は変更される場合があります。視聴前に必ず各公式サイト（FIFA・DAZN・各放送局）で最新情報をご確認ください。本サイトの情報により生じた損害について、運営者は一切の責任を負いません。</div>
+  </div>
+  <div class="card" id="privacy">
+    <div style="font-size:14px;font-weight:900;margin-bottom:6px">プライバシーポリシー</div>
+    <div style="font-size:13px;color:var(--ink-2);line-height:1.8">本サイトは個人情報を収集しません。視聴診断の回答や表示設定はお使いのブラウザ内（localStorage）にのみ保存されます。</div>
+  </div>
+  <div class="card" id="contact">
+    <div style="font-size:14px;font-weight:900;margin-bottom:6px">お問い合わせ</div>
+    <div style="font-size:13px;color:var(--ink-2);line-height:1.8">サイトに関するご意見・データの誤りのご指摘は運営者までご連絡ください。</div>
+  </div>
+  <div class="card" id="pwa">
+    <div style="font-size:14px;font-weight:900;margin-bottom:6px">📱 アプリとして使う（ホーム画面に追加）</div>
+    <div style="font-size:13px;color:var(--ink-2);line-height:1.8">
+      Watch杯はアプリのようにホーム画面から開けます。インストール不要・無料です。<br><br>
+      <b>iPhone（Safari）</b><br>
+      1. 画面下の <b>共有ボタン</b>（□に↑のアイコン）をタップ<br>
+      2. <b>「ホーム画面に追加」</b>を選ぶ<br>
+      3. 右上の「追加」をタップ → ホーム画面にWatch杯のアイコンが出ます<br><br>
+      <b>Android（Chrome）</b><br>
+      1. 右上の <b>メニュー（︙）</b>をタップ<br>
+      2. <b>「ホーム画面に追加」</b>または<b>「アプリをインストール」</b>を選ぶ<br><br>
+      追加すると全画面のアプリ表示になり、試合日程・順位表へワンタップで届きます。
+    </div>
+  </div>
+</main>
+
+<script src="data.js"></script>
+<script src="app.js?v=3"></script>
+<script>injectChrome("");</script>
+</body>
+</html>

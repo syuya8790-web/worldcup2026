@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>出場国一覧（48か国）｜Watch杯</title>
+<meta name="description" content="W杯2026出場48カ国の一覧。各国の代表メンバー・FIFAランキング・グループを掲載。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;800;900&family=Bricolage+Grotesque:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=3">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#bc002d">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Watch杯">
+<style>
+.teams-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media(min-width:480px){.teams-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:768px){.teams-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.tcard{display:flex;align-items:center;gap:9px;background:var(--surface);border-radius:12px;padding:11px 12px;box-shadow:0 0 0 1px var(--line);text-decoration:none;color:inherit}
+.tcard:hover{box-shadow:0 0 0 1.5px var(--accent)}
+.tcard img{width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.tcard .n{font-size:12.5px;font-weight:800;line-height:1.25;overflow:hidden;text-overflow:ellipsis}
+.tcard .meta{font-size:9.5px;font-weight:800;color:var(--ink-3);margin-top:2px;display:flex;gap:6px;align-items:center}
+.tcard .meta .g{background:var(--bg-2);border-radius:4px;padding:0 5px;font-family:var(--font-num)}
+.tcard.jp{box-shadow:0 0 0 1.5px var(--accent)}
+</style>
+</head>
+<body>
+
+<main class="wrap">
+  <h1 class="pagehead">出場国一覧 <span style="font-size:13px;color:var(--ink-3)">48か国</span></h1>
+
+  <div class="filterbar">
+    <div class="row" id="sortRow">
+      <button class="fbtn on" data-s="abc">アルファベット順</button>
+      <button class="fbtn" data-s="group">グループ順</button>
+      <button class="fbtn" data-s="rank">FIFA RANK順</button>
+    </div>
+  </div>
+
+  <div class="teams-grid" id="grid"></div>
+  <div id="pr" style="margin-top:14px"></div>
+</main>
+
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script src="teams.js"></script>
+<script src="app.js?v=3"></script>
+<script>
+injectChrome("standings");
+const list = Object.values(TEAMS);
+function show(sort){
+  document.querySelectorAll("#sortRow .fbtn").forEach(b=>b.classList.toggle("on",b.dataset.s===sort));
+  let ts = [...list];
+  if(sort==="group") ts.sort((a,b)=>a.group.localeCompare(b.group)||(a.rank-b.rank));
+  else if(sort==="rank") ts.sort((a,b)=>a.rank-b.rank);
+  else ts.sort((a,b)=>a.code.localeCompare(b.code));
+  document.getElementById("grid").innerHTML = ts.map(t=>`
+    <a class="tcard${t.code==="jpn"?" jp":""}" href="team.html?c=${t.code}">
+      <img src="${FLAG(t.flag)}" alt="${t.name}" loading="lazy">
+      <div style="min-width:0">
+        <div class="n">${t.name}</div>
+        <div class="meta"><span class="g">${t.group}</span><span>FIFA ${t.rank}位</span></div>
+      </div>
+    </a>`).join("");
+}
+document.getElementById("sortRow").addEventListener("click",e=>{
+  const b=e.target.closest(".fbtn"); if(b) show(b.dataset.s);
+});
+show("abc");
+document.getElementById("pr").innerHTML = prCardHTML();
+</script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>出場国情報｜Watch杯</title>
+<meta name="description" content="W杯2026出場国の代表メンバー・試合日程・グループ順位表。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;800;900&family=Bricolage+Grotesque:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=3">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#bc002d">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Watch杯">
+<style>
+.backlink{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:var(--ink-3);text-decoration:none;margin-top:14px}
+.about-table{display:grid;grid-template-columns:80px 1fr;gap:6px 12px;font-size:13px;margin-bottom:10px}
+.about-table .k{color:var(--ink-3);font-weight:800;font-size:11px;padding-top:2px}
+.about-table .v{font-weight:700}
+.squad-pos{font-size:11px;font-weight:900;letter-spacing:.12em;color:var(--accent);margin:16px 0 6px}
+.squad-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--line);font-size:13px}
+.squad-row:last-child{border-bottom:none}
+.squad-row .mark{width:14px;text-align:center;color:var(--accent);font-size:11px;flex-shrink:0}
+.squad-row .no{font-family:var(--font-num);font-weight:900;color:var(--ink-3);width:22px;text-align:right;flex-shrink:0}
+.squad-row .pname{font-weight:800;flex:1;min-width:0}
+.squad-row .club{font-size:11px;color:var(--ink-3);font-weight:700;text-align:right}
+</style>
+</head>
+<body>
+
+<main class="wrap">
+  <a class="backlink" href="teams.html">← 出場国一覧へ戻る</a>
+  <div id="content"></div>
+</main>
+
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script src="teams.js"></script>
+<script src="app.js?v=3"></script>
+<script>
+injectChrome("standings");
+const code = new URLSearchParams(location.search).get("c") || "jpn";
+const T = TEAMS[code];
+const el = document.getElementById("content");
+if(!T){
+  el.innerHTML = `<p style="padding:40px 0;text-align:center;color:var(--ink-3);font-weight:700">チームが見つかりません。<a href="teams.html" style="color:var(--accent)">出場国一覧へ</a></p>`;
+}else{
+  document.title = `${T.name}｜グループ${T.group}｜Watch杯`;
+  // 試合（チーム名一致でグループステージ抽出）
+  const ms = MATCHES.filter(m=>m.t.some(t=>t.n===T.name));
+  const matchesHTML = ms.map(m=>{
+    const d = new Date(m.kick);
+    return `<div style="margin-bottom:10px">
+      <div class="datehead" style="margin:10px 0 6px">
+        <div class="d" style="font-size:22px">${d.getMonth()+1}.${d.getDate()}</div>
+        <div class="w" style="font-size:13px">${WEEKDAYS[d.getDay()]}曜</div>
+        <div class="rule"></div>
+      </div>${matchCardHTML(m)}</div>`;
+  }).join("");
+  // スカッド
+  const order = ["GK","DF","MF","FW"];
+  const squadHTML = order.map(pos=>{
+    const ps = T.squad.filter(p=>p.pos===pos);
+    if(!ps.length) return "";
+    return `<div class="squad-pos">${pos}</div>` + ps.map(p=>`
+      <div class="squad-row">
+        <span class="mark">${p.mark}</span>
+        <span class="no">${p.no}</span>
+        <span class="pname">${p.name}</span>
+        <span class="club">${p.club}</span>
+      </div>`).join("");
+  }).join("");
+
+  el.innerHTML = `
+  <div class="hero" style="margin-top:10px">
+    <div class="roofline"><i></i><i></i><i></i></div>
+    <div class="hero-inner">
+      <div class="hero-top"><span class="badge-next">${code.toUpperCase()}</span></div>
+      <div style="display:flex;align-items:center;gap:18px;margin-top:14px;flex-wrap:wrap">
+        <img src="${FLAG(T.flag)}" alt="${T.name}" style="width:76px;height:76px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 4px #fff,0 4px 18px rgba(0,0,0,.4);background:#fff">
+        <div>
+          <div style="font-size:24px;font-weight:900">${T.name}</div>
+          ${T.nickname?`<div style="font-size:11px;font-weight:700;color:#ffffffb3;margin-top:3px">${T.nickname}</div>`:""}
+          <div style="display:flex;gap:16px;margin-top:8px">
+            <div><div style="font-size:9px;color:#ffffff80;font-weight:800;letter-spacing:.1em">グループ</div><span style="font-family:var(--font-num);font-size:24px;font-weight:900">${T.group}</span></div>
+            <div><div style="font-size:9px;color:#ffffff80;font-weight:800;letter-spacing:.1em">FIFA RANK</div><span style="font-family:var(--font-num);font-size:24px;font-weight:900">${T.rank}</span></div>
+            ${T.caps?`<div><div style="font-size:9px;color:#ffffff80;font-weight:800;letter-spacing:.1em">出場回数</div><span style="font-family:var(--font-num);font-size:24px;font-weight:900">${T.caps}</span><span style="font-size:11px;font-weight:700"> 回</span></div>`:""}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-label">ABOUT</div>
+  <div class="card">
+    <div class="about-table">
+      <span class="k">国名</span><span class="v">${T.name}</span>
+      ${T.nickname?`<span class="k">愛称</span><span class="v">${T.nickname}</span>`:""}
+      ${T.caps?`<span class="k">出場回数</span><span class="v">${T.caps}回</span>`:""}
+    </div>
+    <div style="font-size:13px;color:var(--ink-2);line-height:1.8">${T.desc}</div>
+  </div>
+
+  <div class="sec-label">GROUP STAGE</div>
+  <h2 class="pagehead" style="margin-top:0;font-size:18px">${T.name} の試合日程</h2>
+  <div id="tmatches">${matchesHTML || '<p style="color:var(--ink-3);font-size:13px;font-weight:700">試合データなし</p>'}</div>
+
+  <div class="sec-label">GROUP ${T.group}</div>
+  <h2 class="pagehead" style="margin-top:0;font-size:18px">グループ ${T.group} 順位表</h2>
+  ${groupTableHTML(T.group, GROUPS[T.group], {qline:true})}
+
+  <div class="sec-label">SQUAD</div>
+  <h2 class="pagehead" style="margin-top:0;font-size:18px">${T.name} 代表メンバー</h2>
+  <div class="card" style="padding:8px 14px">${squadHTML}</div>
+  <p class="legend">★ 市場価値€100m以上の世界トップクラス選手、または世界的レジェンド ｜ ◇ 各国代表の中心となるキーマン</p>
+
+  ${prCardHTML()}`;
+  bindCalButtons(el);
+  // 順位表のチーム名→各国ページへリンク
+  linkifyStandings(el);
+}
+</script>
+</body>
+</html>

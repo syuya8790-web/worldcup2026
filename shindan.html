@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>視聴診断｜あなたに合うW杯の見方を30秒で診断｜Watch杯</title>
+<meta name="description" content="3つの質問に答えるだけで、あなたに最適なW杯2026の視聴方法（DAZN・NHK・日テレ・BSP4K）がわかる視聴診断。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;800;900&family=Bricolage+Grotesque:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=3">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#bc002d">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Watch杯">
+</head>
+<body>
+
+<main class="wrap">
+  <h1 class="pagehead">視聴診断</h1>
+  <p class="pagesub">3つの質問に答えるだけ。あなたに合うW杯の見方が30秒でわかる。</p>
+
+  <div id="quiz"></div>
+  <div id="result"></div>
+
+  <div class="sec-label">FAQ</div>
+  <h2 class="pagehead" style="margin-top:0;font-size:18px">よくある質問</h2>
+  <div class="card">
+    <div style="font-size:13px;font-weight:900">Q. 「28時」「29時」キックオフってどういう意味？</div>
+    <div style="font-size:13px;color:var(--ink-2);line-height:1.8;margin:4px 0 14px">深夜の時刻を前日から通した表記です。例えば「6/14（日）29:00」は「6/15（月）朝5:00」と同じ意味。寝る前に「今夜29時か」とわかる、テレビ業界由来の表記です。</div>
+    <div style="font-size:13px;font-weight:900">Q. 日本戦は地上波（無料）で見られる？</div>
+    <div style="font-size:13px;color:var(--ink-2);line-height:1.8;margin:4px 0 14px">見られます。第1戦・第3戦はNHK総合、第2戦は日本テレビ系で生中継。さらにDAZNでも日本戦は全試合無料配信されます。</div>
+    <div style="font-size:13px;font-weight:900">Q. 全104試合を見る方法は？</div>
+    <div style="font-size:13px;color:var(--ink-2);line-height:1.8;margin:4px 0">全試合をライブ配信するのはDAZNのみです。地上波（NHK・日テレ・フジ）は日本戦や注目カードを中心に放送します。</div>
+  </div>
+</main>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+ {"@type":"Question","name":"W杯の「28時」「29時」キックオフとはどういう意味？","acceptedAnswer":{"@type":"Answer","text":"深夜の時刻を前日から通した表記です。「6/14（日）29:00」は「6/15（月）朝5:00」と同じ意味です。"}},
+ {"@type":"Question","name":"W杯2026の日本戦は地上波で無料で見られる？","acceptedAnswer":{"@type":"Answer","text":"見られます。第1戦・第3戦はNHK総合、第2戦は日本テレビ系で生中継。DAZNでも日本戦は全試合無料配信されます。"}},
+ {"@type":"Question","name":"W杯2026の全104試合を見る方法は？","acceptedAnswer":{"@type":"Answer","text":"全試合をライブ配信するのはDAZNのみです。地上波は日本戦や注目カードを中心に放送します。"}}
+]}
+</script>
+
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script src="app.js?v=3"></script>
+<script>
+injectChrome("shindan");
+
+const QS = [
+  { q:"Q1. 日本戦のほかに見たい試合は？", opts:[
+    ["日本戦が見られれば満足","jp"],
+    ["ブラジル・アルゼンチン・スペインなど強豪国は見たい","mid"],
+    ["優勝候補も死の組も全部追いたい","all"]]},
+  { q:"Q2. 朝5時・朝8時キックオフ、リアタイできる？", opts:[
+    ["気合いで起きる。リアタイ命","live"],
+    ["起きられない日もある。あとから見たい","catchup"],
+    ["リアタイは無理。ハイライトでサクッと追いたい","highlight"]]},
+  { q:"Q3. W杯が終わったあともサッカー見る？", opts:[
+    ["W杯だけでいい","wconly"],
+    ["JリーグやACL、海外サッカーも気になる","football"],
+    ["野球・F1・格闘技とか他のスポーツも好き","sports"]]}
+];
+const ans = [];
+const quiz = document.getElementById("quiz");
+function renderQ(){
+  quiz.innerHTML = QS.map((s,i)=>`
+    <div class="card" style="${i>ans.length?"opacity:.35;pointer-events:none":""}">
+      <div style="font-size:14px;font-weight:900;margin-bottom:10px">${s.q}</div>
+      ${s.opts.map(([label,val])=>`
+        <button class="q-opt${ans[i]===val?" sel":""}" data-i="${i}" data-v="${val}">${label}</button>`).join("")}
+    </div>`).join("");
+  quiz.querySelectorAll(".q-opt").forEach(b=>{
+    b.onclick = ()=>{
+      ans[+b.dataset.i] = b.dataset.v;
+      ans.length = +b.dataset.i + 1; // 後の回答をリセット
+      renderQ(); renderResult();
+      if(ans.length<QS.length) quiz.children[ans.length].scrollIntoView({behavior:"smooth",block:"center"});
+    };
+  });
+}
+function renderResult(){
+  const el = document.getElementById("result");
+  if(ans.length < QS.length){ el.innerHTML = ""; return; }
+  const [vol, time, after] = ans;
+  let title, items, why, showDmm = false;
+  // 見たい範囲 × リアタイ可否 × 大会後 → 全パターンでDAZNの価値に着地させる
+  if(vol==="jp" && time==="live"){
+    title = "地上波＋DAZN無料登録の最強コンビ";
+    items = ["NHK","日テレ","DAZN無料"];
+    why = "日本戦3試合は地上波で生中継があるからリアタイはOK。ただし<b>DAZNの無料登録だけは今やっておくべき</b>。日本戦は全試合無料配信＝外出先でもスマホで見られるし、日本が決勝トーナメントに進んだ瞬間「裏の強豪国の試合も見たい」が必ず来る。その時に登録で慌てないように。";
+  } else if(vol==="jp"){
+    title = time==="highlight" ? "あなたに必要なのは「ハイライト」＝DAZN" : "あなたに必要なのは「見逃し配信」＝DAZN";
+    items = ["DAZN","NHK"];
+    why = time==="highlight"
+      ? "地上波は放送が終わったら見る手段がない。DAZNなら<b>全試合のハイライトと見逃し配信</b>があるので、朝起きてから通勤中に日本戦を追える。リアタイできない人ほどDAZNの恩恵が大きい。"
+      : "朝5時に起きられなかったら、地上波は録画しておかない限りそこで終了。DAZNなら<b>追っかけ再生・フルマッチの見逃し配信</b>があるので、起きた時間から自分のペースで見られる。寝坊が許される唯一の観戦方法。";
+  } else if(vol==="mid"){
+    title = "強豪国まで見るならDAZN（地上波だけでは足りない）";
+    items = ["DAZN","NHK","日テレ"];
+    why = "ブラジル・アルゼンチン・スペインの試合は<b>地上波で放送されないカードが多数</b>。全104試合を配信するのはDAZNだけ。日本戦は地上波＋無料配信で押さえつつ、見たい強豪国のカードをDAZNで拾うのが正解。" + (time!=="live" ? "見逃し配信があるので深夜・早朝キックオフでも問題なし。" : "");
+  } else {
+    title = "DAZN一択（全104試合ライブ＆見逃し）";
+    items = ["DAZN"];
+    why = "全部見たいなら選択肢はDAZNしかない。<b>全104試合ライブ配信＋見逃し＋ハイライト</b>で、同時刻キックオフの裏カードも後から回収できる。グループ最終節の同時開催はW杯の醍醐味、ここを全部追えるのはDAZNだけ。";
+  }
+  // Q3（大会後）で月額の「元が取れる感」を上乗せ
+  if(after==="football"){
+    why += "<br><br>しかも、あなたはW杯後も<b>Jリーグ・ACL・海外サッカー</b>を見るタイプ。DAZNはそれが全部同じアカウントで見られるので、月額の元は余裕で取れる。";
+  } else if(after==="sports"){
+    showDmm = true;
+    why += "<br><br>他のスポーツも好きなら<b>DMM×DAZNホーダイ</b>が狙い目。DAZNにDMMプレミアム（アニメ・映画など）が付いて単体契約より安い。W杯きっかけで入るなら一番コスパがいい入口。";
+  } else {
+    why += "<br><br>「W杯だけでいい」なら、<b>大会期間だけ契約して終わったら解約</b>でOK。1〜2ヶ月分の課金で104試合＝1試合あたり数十円で見られる計算。";
+  }
+  el.innerHTML = `
+    <div class="sec-label">RESULT</div>
+    <div class="diag-result">
+      <div style="font-size:10px;font-weight:900;letter-spacing:.14em;color:var(--accent)">あなたへのおすすめ</div>
+      <h3>${title}</h3>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 10px">${items.map(pillHTML).join("")}</div>
+      <div class="why">${why}</div>
+      <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+        <a href="${AFF.daznUrl}" target="_blank" rel="noopener sponsored" class="btn-detail" style="background:var(--accent);color:#fff;font-size:12px">DAZNのキャンペーンを見る <span style="font-size:9px;opacity:.8">PR</span></a>
+        ${showDmm ? `<a href="${AFF.dmmUrl}" target="_blank" rel="noopener sponsored" class="btn-detail" style="background:#1d4ed8;color:#fff;font-size:12px">DMM×DAZNホーダイを見る <span style="font-size:9px;opacity:.8">PR</span></a>` : ""}
+        <a href="schedule.html" class="btn-detail" style="background:var(--ink-1);color:#fff;font-size:12px">全試合日程で確認 →</a>
+        <button class="btn-detail" style="background:var(--bg-2);font-size:12px" onclick="location.reload()">もう一度診断</button>
+      </div>
+    </div>`;
+  el.scrollIntoView({behavior:"smooth",block:"center"});
+}
+renderQ();
+</script>
+</body>
+</html>

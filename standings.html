@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>グループ順位表・決勝トーナメント｜Watch杯</title>
+<meta name="description" content="W杯2026全12グループの順位表。各グループ上位2チーム＋3位上位8チームが決勝トーナメント進出。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;800;900&family=Bricolage+Grotesque:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=3">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#bc002d">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Watch杯">
+</head>
+<body>
+
+<main class="wrap">
+  <h1 class="pagehead">順位表</h1>
+  <p class="pagesub">グループステージ · 開幕 ｜ 各グループ上位2チームが決勝トーナメント進出。3位の上位8チームも進出（48カ国拡大方式）。</p>
+
+  <a href="teams.html" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;margin-bottom:6px;border-radius:10px;background:var(--surface);box-shadow:0 0 0 1px var(--line-2);text-decoration:none;color:inherit">
+    <div style="display:flex;align-items:center;gap:10px"><span style="font-size:20px;line-height:1">🌍</span><span style="font-size:13px;font-weight:800">出場48か国 一覧（代表メンバー掲載）</span></div>
+    <span style="font-size:16px;color:var(--ink-3)">→</span>
+  </a>
+
+  <div class="filterbar">
+    <div class="row" id="jumpRow">
+      <button class="fbtn on" data-g="ALL">全グループ</button>
+    </div>
+  </div>
+
+  <div id="tables"></div>
+  <p class="legend">─ ─ 赤点線より上（1〜2位）が自動進出ライン ｜ 順位表は試合結果に応じて随時更新</p>
+</main>
+
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script src="teams.js"></script>
+<script src="app.js?v=3"></script>
+<script>
+injectChrome("standings");
+const row = document.getElementById("jumpRow");
+Object.keys(GROUPS).forEach(g=>{
+  const b = document.createElement("button");
+  b.className = "fbtn"; b.dataset.g = g;
+  b.textContent = g==="F" ? "F 🇯🇵" : g;
+  row.appendChild(b);
+});
+function show(g){
+  document.querySelectorAll("#jumpRow .fbtn").forEach(x=>x.classList.toggle("on", x.dataset.g===g));
+  const el = document.getElementById("tables");
+  const gs = g==="ALL" ? Object.keys(GROUPS) : [g];
+  el.innerHTML = gs.map((k,i)=>{
+    let table = groupTableHTML(k, GROUPS[k], {qline:true});
+    // 突破条件チップ（FEATURES.qualifyがtrueの時だけ表示）
+    if(FEATURES.qualify) table = table.replace("</table>\n  </div>", "</table>" + qualifyChipsHTML(k) + "</div>");
+    return table + ((i+1)%4===0?prCardHTML(i%8===3?"dazn":"dmm"):"");
+  }).join("");
+  linkifyStandings(el); // チーム名→各国ページ
+}
+row.addEventListener("click", e=>{
+  const b = e.target.closest(".fbtn");
+  if(b) show(b.dataset.g);
+});
+show("ALL");
+</script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SNS素材ジェネレーター（運営用）｜Watch杯</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;800;900&family=Bricolage+Grotesque:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=3">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#bc002d">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Watch杯">
+<style>
+.story{
+  width:360px;height:640px;margin:0 auto;border-radius:18px;overflow:hidden;
+  background:radial-gradient(120% 130% at 80% -10%,#3a0d1c 0%,transparent 60%),#0d1326;
+  color:#fff;position:relative;display:flex;flex-direction:column;padding:28px 22px;
+}
+.story .roof{position:absolute;top:0;left:0;right:0;display:flex;height:6px}
+.story .roof i{flex:1;background:var(--accent)}
+.story .roof i:nth-child(2){background:#fff}
+.story .tag{font-size:10px;font-weight:900;letter-spacing:.2em;color:#ffffff99;margin-top:6px}
+.story .bigdate{font-family:var(--font-num);font-size:54px;font-weight:900;letter-spacing:-.03em;line-height:1}
+.story .bigdate small{font-size:20px;font-weight:900;margin-left:6px}
+.story .headline{font-size:16px;font-weight:900;margin:2px 0 14px;color:#fff}
+.story .sm{display:flex;flex-direction:column;gap:8px;flex:1;overflow:hidden}
+.story .smatch{background:#ffffff10;border:1px solid #ffffff1c;border-radius:12px;padding:9px 12px;display:flex;align-items:center;gap:10px}
+.story .smatch .time{font-family:var(--font-num);font-size:17px;font-weight:900;min-width:52px;line-height:1.1}
+.story .smatch .time small{display:block;font-size:8px;color:#ffffff80;font-weight:700;letter-spacing:.04em}
+.story .smatch .teams{flex:1;min-width:0}
+.story .smatch .trow{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800}
+.story .smatch .trow img{width:16px;height:16px;border-radius:50%;background:#fff}
+.story .smatch .tv{font-size:8.5px;font-weight:800;color:#ffd34d;text-align:right;line-height:1.4}
+.story .smatch.jp{background:#bc002d33;border-color:#ff6b8a66}
+.story .foot{margin-top:12px;text-align:center}
+.story .foot .cta{font-size:11px;font-weight:900;color:#fff}
+.story .foot .url{font-size:10px;font-weight:800;color:#ffd34d;letter-spacing:.04em}
+.panel{max-width:520px;margin:0 auto}
+textarea{width:100%;min-height:120px;border:1px solid var(--line-2);border-radius:10px;padding:10px;font-family:var(--font-jp);font-size:12px;background:var(--surface)}
+</style>
+</head>
+<body>
+
+<main class="wrap panel">
+  <h1 class="pagehead">SNS素材ジェネレーター <span style="font-size:11px;color:var(--ink-3)">運営用・noindex</span></h1>
+  <p class="pagesub">ストーリーズ/TikTok用の「今日の試合」画像とキャプションを毎日自動生成。</p>
+
+  <div class="filterbar"><div class="row" id="dayRow">
+    <button class="fbtn on" data-d="0">今日</button>
+    <button class="fbtn" data-d="1">明日</button>
+    <button class="fbtn" data-d="2">明後日</button>
+  </div></div>
+
+  <div id="storyBox"></div>
+
+  <div style="display:flex;gap:8px;justify-content:center;margin:14px 0;flex-wrap:wrap">
+    <button class="btn-detail" id="btnDl" style="background:var(--accent);color:#fff">⬇ 画像をダウンロード（1080×1920）</button>
+    <button class="btn-detail" id="btnCap" style="background:var(--ink-1);color:#fff">📋 キャプションをコピー</button>
+  </div>
+
+  <div class="sec-label">CAPTION</div>
+  <textarea id="caption" readonly></textarea>
+  <p class="legend">※サイトURLは公開後に config.js ではなくこのページ内の SITE_URL を書き換え</p>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script src="app.js?v=3"></script>
+<script>
+injectChrome("");
+const SITE_URL = "https://worldcup2026-5hz.pages.dev";
+
+let dayOffset = 0;
+function jstDateKey(offset){
+  return new Date(Date.now()+9*3600*1000+offset*86400*1000).toISOString().slice(0,10);
+}
+function renderStory(){
+  const key = jstDateKey(dayOffset);
+  const d = new Date(key+"T00:00:00+09:00");
+  const ms = MATCHES.filter(m=>m.kick.slice(0,10)===key);
+  const label = ["今日","明日","明後日"][dayOffset];
+  const shown = ms.slice(0,7);
+  document.getElementById("storyBox").innerHTML = `
+  <div class="story" id="story">
+    <div class="roof"><i></i><i></i><i></i></div>
+    <div class="tag">FIFA WORLD CUP 2026</div>
+    <div class="bigdate">${d.getMonth()+1}.${d.getDate()}<small>${WEEKDAYS[d.getDay()]}曜</small></div>
+    <div class="headline">${label}のW杯 ⚽ ${ms.length}試合${ms.some(m=>m.jp)?" 🇯🇵日本戦あり！":""}</div>
+    <div class="sm">
+      ${shown.map(m=>`
+        <div class="smatch${m.jp?" jp":""}">
+          <div class="time"><small>日本時間</small>${m.kick.slice(11,16)}</div>
+          <div class="teams">
+            <div class="trow">${m.t[0].f?`<img src="${FLAG(m.t[0].f)}">`:""}${m.t[0].n}</div>
+            <div class="trow">${m.t[1].f?`<img src="${FLAG(m.t[1].f)}">`:""}${m.t[1].n}</div>
+          </div>
+          <div class="tv">${m.tv.slice(0,2).join("<br>")}</div>
+        </div>`).join("")}
+      ${ms.length>shown.length?`<div style="text-align:center;font-size:11px;font-weight:800;color:#ffffff99">ほか${ms.length-shown.length}試合</div>`:""}
+      ${ms.length===0?`<div style="text-align:center;padding:40px 0;font-weight:900;color:#ffffff99">この日は試合なし。<br>次戦に備えて寝ろ！</div>`:""}
+    </div>
+    <div class="foot">
+      <div class="cta">W杯は <span style="color:#ffd34d">Watch杯</span> で見ろ。放送・日程・順位表ぜんぶ →</div>
+      <div class="url">${SITE_URL}</div>
+    </div>
+  </div>`;
+  // キャプション
+  const lines = ms.map(m=>`${m.kick.slice(11,16)}〜 ${m.t[0].n} vs ${m.t[1].n}（${m.tv[0]||""}）`);
+  document.getElementById("caption").value =
+`【${label}のW杯⚽ ${d.getMonth()+1}/${d.getDate()}】
+${lines.join("\n")}
+
+全試合の放送・日本時間・順位表は「Watch杯」で → ${SITE_URL}
+
+#W杯2026 #ワールドカップ #サッカー日本代表 #Watch杯 #サッカー好きと繋がりたい`;
+}
+document.getElementById("dayRow").addEventListener("click",e=>{
+  const b=e.target.closest(".fbtn"); if(!b) return;
+  document.querySelectorAll("#dayRow .fbtn").forEach(x=>x.classList.toggle("on",x===b));
+  dayOffset = +b.dataset.d;
+  renderStory();
+});
+document.getElementById("btnDl").onclick = async()=>{
+  const node = document.getElementById("story");
+  const canvas = await html2canvas(node, {scale: 3, useCORS: true, backgroundColor: "#0d1326"});
+  const a = document.createElement("a");
+  a.href = canvas.toDataURL("image/png");
+  a.download = `wc26-story-${jstDateKey(dayOffset)}.png`;
+  a.click();
+};
+document.getElementById("btnCap").onclick = async()=>{
+  await navigator.clipboard.writeText(document.getElementById("caption").value);
+  alert("キャプションをコピーしました");
+};
+renderStory();
+</script>
+</body>
+</html>

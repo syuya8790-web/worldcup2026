@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /sns.html
+
+# 公開後にドメインを差し替え
+Sitemap: https://worldcup2026-5hz.pages.dev/sitemap.xml

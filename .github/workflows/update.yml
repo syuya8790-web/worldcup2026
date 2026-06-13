@@ -1,0 +1,45 @@
+name: データ自動更新
+
+on:
+  schedule:
+    # 3時間ごとに実行（試合結果・順位表を当日中に反映するため）
+    - cron: "0 */3 * * *"
+  workflow_dispatch: {}  # 手動実行ボタンも有効化
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 日程・放送（参考サイトから）
+        run: python3 update_data.py
+
+      - name: 試合結果・順位表（Wikipediaから上書き）
+        run: python3 update_results.py
+
+      - name: ニュース
+        run: python3 update_news.py
+
+      - name: スカッド（月曜の朝5時JST or 手動実行時のみ）
+        run: |
+          if { [ "$(date -u +%u)" = "1" ] && [ "$(date -u +%H)" = "20" ]; } || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            python3 update_teams.py
+          else
+            echo "スキップ（メンバーは頻繁に変わらないため週1のみ）"
+          fi
+
+      - name: 変更があればコミット＆プッシュ
+        run: |
+          git config user.name "watch-hai-bot"
+          git config user.email "actions@github.com"
+          git add data.js news.js teams.js
+          if git diff --cached --quiet; then
+            echo "変更なし"
+          else
+            git commit -m "data: 自動更新"
+            git push
+          fi

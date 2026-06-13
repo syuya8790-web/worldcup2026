@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>日本代表｜試合日程・放送・グループ情報｜Watch杯</title>
+<meta name="description" content="W杯2026日本代表（SAMURAI BLUE）の試合日程・放送予定・グループF情報。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;800;900&family=Bricolage+Grotesque:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=3">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#bc002d">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Watch杯">
+<script type="application/ld+json">
+[
+  {"@context":"https://schema.org","@type":"SportsEvent","name":"FIFAワールドカップ2026 オランダ対日本（グループF第1戦）","startDate":"2026-06-15T05:00:00+09:00","location":{"@type":"Place","name":"AT&Tスタジアム","address":"米国テキサス州アーリントン"},"competitor":[{"@type":"SportsTeam","name":"オランダ代表"},{"@type":"SportsTeam","name":"サッカー日本代表"}]},
+  {"@context":"https://schema.org","@type":"SportsEvent","name":"FIFAワールドカップ2026 チュニジア対日本（グループF第2戦）","startDate":"2026-06-21T13:00:00+09:00","location":{"@type":"Place","name":"エスタディオBBVA","address":"メキシコ・モンテレイ"},"competitor":[{"@type":"SportsTeam","name":"チュニジア代表"},{"@type":"SportsTeam","name":"サッカー日本代表"}]},
+  {"@context":"https://schema.org","@type":"SportsEvent","name":"FIFAワールドカップ2026 日本対スウェーデン（グループF第3戦）","startDate":"2026-06-26T08:00:00+09:00","location":{"@type":"Place","name":"AT&Tスタジアム","address":"米国テキサス州アーリントン"},"competitor":[{"@type":"SportsTeam","name":"サッカー日本代表"},{"@type":"SportsTeam","name":"スウェーデン代表"}]}
+]
+</script>
+</head>
+<body>
+
+<main class="wrap">
+  <div class="hero" style="margin-top:16px">
+    <div class="roofline"><i></i><i></i><i></i></div>
+    <div class="hero-inner">
+      <div class="hero-top">
+        <span class="badge-next">JAPAN · SAMURAI BLUE</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:18px;margin-top:16px;flex-wrap:wrap">
+        <img src="https://flagcdn.com/jp.svg" alt="日本" style="width:84px;height:84px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 4px #fff,0 4px 18px rgba(0,0,0,.4);background:#fff">
+        <div>
+          <div style="font-size:24px;font-weight:900">日本代表</div>
+          <div style="font-size:12px;font-weight:700;color:#ffffffb3;margin-top:4px">8大会連続8回目の出場</div>
+          <div style="display:flex;gap:14px;margin-top:10px">
+            <div><div style="font-size:9px;color:#ffffff80;font-weight:800;letter-spacing:.1em">グループ</div><div class="hero-center" style="min-width:0"><span style="font-family:var(--font-num);font-size:26px;font-weight:900">F</span></div></div>
+            <div><div style="font-size:9px;color:#ffffff80;font-weight:800;letter-spacing:.1em">FIFA RANK</div><span style="font-family:var(--font-num);font-size:26px;font-weight:900">18</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-label">GROUP F</div>
+  <h2 class="pagehead" style="margin-top:0;font-size:18px">グループF 順位表</h2>
+  <div id="groupF"></div>
+  <div id="qualifyBox"></div>
+  <p class="legend">上位2チームが決勝トーナメント進出。3位も成績上位8チームに入れば進出。</p>
+
+  <div id="newsArea"></div>
+
+  <a href="team.html?c=jpn" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;margin-bottom:6px;border-radius:10px;background:var(--surface);box-shadow:0 0 0 1px var(--line-2);text-decoration:none;color:inherit">
+    <div style="display:flex;align-items:center;gap:10px"><span style="font-size:20px;line-height:1">🇯🇵</span><span style="font-size:13px;font-weight:800">日本代表メンバー26名を見る（背番号・所属クラブ）</span></div>
+    <span style="font-size:16px;color:var(--ink-3)">→</span>
+  </a>
+
+  <div class="sec-label">MATCHES</div>
+  <h2 class="pagehead" style="margin-top:0;font-size:18px">グループステージ 3試合</h2>
+  <div id="jpMatches"></div>
+
+  <div class="sec-label">HOW TO WATCH</div>
+  <div class="card">
+    <div style="font-size:14px;font-weight:900;margin-bottom:8px">日本戦はすべて無料で見られる</div>
+    <div style="font-size:13px;color:var(--ink-2);line-height:1.8">
+      第1戦オランダ戦・第3戦スウェーデン戦は<b>NHK総合</b>、第2戦チュニジア戦は<b>日本テレビ系</b>で地上波生中継。
+      さらに<b>DAZNでは日本戦全試合が無料配信</b>される。詳しい視聴方法は<a href="shindan.html" style="color:var(--accent);font-weight:800">視聴診断</a>で30秒でわかる。
+    </div>
+  </div>
+  <div id="pr"></div>
+</main>
+
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script src="teams.js"></script>
+<script src="news.js"></script>
+<script src="app.js?v=3"></script>
+<script>
+injectChrome("japan");
+document.getElementById("groupF").innerHTML = groupTableHTML("F", GROUPS.F, {qline:true});
+linkifyStandings(document.getElementById("groupF"));
+
+// 突破条件（残り試合を全列挙して自動判定）— FEATURES.qualifyで表示切替
+const jpQ = FEATURES.qualify ? qualifyGroup("F").find(q=>q.n==="日本") : null;
+if(jpQ){
+  const msg = {
+    "突破確定":"🎉 日本は2位以内が確定。決勝トーナメント進出！",
+    "敗退確定":"😢 日本はグループ4位が確定…",
+    "3位進出に望み":"😬 2位以内の可能性は消滅。3位で上位8チームに入れれば進出。",
+    "自力突破圏":"💪 日本は残り試合に勝てば自力で2位以内＝突破できる。",
+    "突破可能性あり（他力）":"🙏 自力突破は消滅。他会場の結果次第で突破の可能性あり。",
+  }[jpQ.label] || "";
+  document.getElementById("qualifyBox").innerHTML = `
+    <div class="card" style="border-left:3px solid var(--accent)">
+      <div style="font-size:10px;font-weight:900;letter-spacing:.12em;color:var(--accent);margin-bottom:4px">突破条件（自動計算）</div>
+      <div style="font-size:14px;font-weight:900">${msg}</div>
+      <div style="margin:8px -14px -8px">${qualifyChipsHTML("F")}</div>
+      <div style="font-size:10px;color:var(--ink-3);font-weight:700;margin-top:8px">※勝点のみで全シナリオを計算（得失点差は未考慮）。順位表データ基準。</div>
+    </div>`;
+}
+// ニュース
+document.getElementById("newsArea").innerHTML = newsListHTML(6);
+const jpMs = MATCHES.filter(m=>m.jp);
+document.getElementById("jpMatches").innerHTML = jpMs.map((m,i)=>{
+  const d = new Date(m.kick);
+  const w = WEEKDAYS[d.getDay()];
+  return `<div style="margin-bottom:14px">
+    <div class="datehead" style="margin:14px 0 8px">
+      <span class="stage">第${i+1}戦</span>
+      <div class="d" style="font-size:26px">${d.getMonth()+1}.${d.getDate()}</div>
+      <div class="w" style="font-size:14px">${w}曜</div>
+      <div class="rule"></div>
+    </div>
+    ${matchCardHTML(m)}
+  </div>`;
+}).join("");
+bindCalButtons(document.getElementById("jpMatches"));
+document.getElementById("pr").innerHTML = prCardHTML();
+</script>
+</body>
+</html>

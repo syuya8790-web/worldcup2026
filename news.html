@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W杯ニュース・速報｜Watch杯</title>
+<meta name="description" content="W杯2026の最新ニュース・速報。日本代表の怪我・メンバー情報、試合結果をまとめてチェック。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;800;900&family=Bricolage+Grotesque:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=3">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#bc002d">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Watch杯">
+</head>
+<body>
+
+<main class="wrap">
+  <div id="newsArea"></div>
+  <div id="pr"></div>
+</main>
+
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script src="news.js"></script>
+<script src="app.js?v=3"></script>
+<script>
+injectChrome("top");
+document.getElementById("newsArea").innerHTML = newsListHTML(10);
+document.getElementById("pr").innerHTML = prCardHTML("dazn");
+</script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>全試合日程（全104試合・日本時間）｜Watch杯</title>
+<meta name="description" content="W杯2026全104試合の日程・日本時間キックオフ・放送局を一覧表示。放送局・無料・日本戦で絞り込み。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;800;900&family=Bricolage+Grotesque:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=3">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#bc002d">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Watch杯">
+</head>
+<body>
+
+<main class="wrap">
+  <h1 class="pagehead">全試合日程</h1>
+  <p class="pagesub">全104試合・日本時間表示 ｜ <span style="color:var(--accent);font-weight:800">赤枠は日本戦</span></p>
+
+  <div class="filterbar">
+    <div class="row" id="tvFilters">
+      <button class="fbtn on" data-f="all">すべての試合</button>
+      <button class="fbtn" data-f="jp">日本代表のみ</button>
+      <button class="fbtn" data-f="free">無料で見られる</button>
+      <button class="fbtn" data-f="DAZN">DAZN</button>
+      <button class="fbtn" data-f="NHK">NHK</button>
+      <button class="fbtn" data-f="日テレ">日テレ</button>
+      <button class="fbtn" data-f="フジ">フジ</button>
+      <button class="fbtn" data-f="BSP4K">BSP4K</button>
+    </div>
+    <input class="searchbox" id="search" type="search" placeholder="🔍 チーム名・都市で検索（例: ブラジル / ダラス）">
+  </div>
+
+  <div id="list"></div>
+</main>
+
+<button class="todaybtn" id="todayBtn">📍 今日へ</button>
+
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script src="app.js?v=3"></script>
+<script>
+injectChrome("schedule");
+
+let filter = "all", query = "";
+function apply(){
+  let ms = MATCHES;
+  if(filter==="jp") ms = ms.filter(m=>m.jp);
+  else if(filter==="free") ms = ms.filter(m=>m.tv.some(t=>["DAZN無料","NHK","日テレ","フジ"].includes(t)));
+  else if(filter!=="all") ms = ms.filter(m=>m.tv.some(t=>t.startsWith(filter)));
+  if(query) ms = ms.filter(m=>m.t.some(t=>t.n.includes(query)) || m.info.includes(query));
+  renderSchedule(document.getElementById("list"), ms);
+  insertPRCards(document.getElementById("list"), 4); // PR枠（4日分ごと）
+}
+document.querySelectorAll("#tvFilters .fbtn").forEach(b=>{
+  b.onclick = ()=>{
+    document.querySelectorAll("#tvFilters .fbtn").forEach(x=>x.classList.remove("on"));
+    b.classList.add("on");
+    filter = b.dataset.f;
+    apply();
+  };
+});
+document.getElementById("search").addEventListener("input", e=>{ query = e.target.value.trim(); apply(); });
+
+// 今日へジャンプ（使いやすさ施策）
+function scrollToToday(smooth=true){
+  const todayKey = new Date(Date.now()+9*3600*1000).toISOString().slice(0,10);
+  const secs = [...document.querySelectorAll("#list section")];
+  const target = secs.find(s=>s.dataset.date>=todayKey);
+  if(target) target.scrollIntoView({behavior:smooth?"smooth":"auto",block:"start"});
+}
+document.getElementById("todayBtn").onclick = ()=>scrollToToday();
+
+apply();
+scrollToToday(false); // 開いたら自動で今日へ
+</script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Watch杯｜W杯2026の日程・放送・日本時間まるごと観戦ガイド</title>
+<meta name="description" content="2026年W杯全104試合の日本時間・放送・配信を網羅した視聴ガイド。NEXT MATCH、日程、順位表、視聴診断。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;800;900&family=Bricolage+Grotesque:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=3">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#bc002d">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Watch杯">
+</head>
+<body>
+
+<main class="wrap">
+  <div id="hero"></div>
+  <div id="upcoming"></div>
+  <div style="text-align:center;margin:20px 0">
+    <a href="schedule.html" class="btn-detail" style="display:inline-block;background:var(--ink-1);color:#fff">全104試合の日程を見る →</a>
+  </div>
+</main>
+
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script src="app.js?v=3"></script>
+<script>
+injectChrome("top");
+
+// ===== NEXT MATCH ヒーロー（日本戦優先）=====
+const now = Date.now();
+const upcoming = MATCHES.filter(m=>new Date(m.kick).getTime()+2.25*3600*1000 > now);
+const nextJp = upcoming.find(m=>m.jp);
+const heroM = nextJp || upcoming[0];
+if(heroM){
+  const st = matchState(heroM);
+  const d = new Date(heroM.kick);
+  const jst = new Intl.DateTimeFormat("ja-JP",{month:"numeric",day:"numeric",weekday:"short",timeZone:"Asia/Tokyo"}).formatToParts(d);
+  const get = t=>jst.find(p=>p.type===t).value;
+  const stageTxt = heroM.info.includes("グループ") ? heroM.info.split(" ·")[0] + (heroM.jp?"・第"+ (heroM.id.slice(-1)) +"戦":"") : heroM.info.split(" ·")[0];
+  const team = t=>{
+    const img = t.f?`<img src="${FLAG(t.f)}" alt="${t.n}">`:`<span class="noflag">?</span>`;
+    return `<div class="hero-team">${img}<div class="name">${t.n}</div></div>`;
+  };
+  const late = heroM.late?`<div class="latebox"><span class="ld">${heroM.lateday} 深夜</span><br><span class="lt">${heroM.late}</span></div>`:"";
+  document.getElementById("hero").innerHTML = `
+  <div class="hero">
+    <div class="roofline"><i></i><i></i><i></i></div>
+    <svg class="pitch" viewBox="0 0 700 320" preserveAspectRatio="none">
+      <rect x="20" y="20" width="660" height="280" fill="none" stroke="#fff" stroke-width="1.5"/>
+      <line x1="350" y1="20" x2="350" y2="300" stroke="#fff" stroke-width="1.5"/>
+      <circle cx="350" cy="160" r="55" fill="none" stroke="#fff" stroke-width="1.5"/>
+    </svg>
+    <div class="hero-inner">
+      <div class="hero-top">
+        <span class="badge-next">${st==="live"?"LIVE NOW":"NEXT MATCH"}</span>
+        <span class="sub">${stageTxt}</span>
+      </div>
+      <div class="hero-main">
+        ${team(heroM.t[0])}
+        <div class="hero-center">
+          <div class="date">${get("month")}月${get("day")}日 <small>(${get("weekday")})</small></div>
+          <div class="lbl">日本時間</div>
+          <div class="time">${heroM.kick.slice(11,16)}</div>
+          ${late}
+          <div class="hero-count" id="cd"></div>
+        </div>
+        ${team(heroM.t[1])}
+      </div>
+      <div class="hero-bottom">
+        <div>
+          <div class="lbl">ここで見られる</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">${heroM.tv.map(pillHTML).join("")}</div>
+          <div class="hero-venue">${venueLabel(heroM.info.split("· ")[1])}</div>
+        </div>
+        <button class="btn-detail" data-cal="${heroM.id}">📅 カレンダー登録</button>
+      </div>
+      ${(()=>{
+        const todayKey = new Date(Date.now()+9*3600*1000).toISOString().slice(0,10);
+        const todayCount = MATCHES.filter(m=>m.kick.slice(0,10)===todayKey).length;
+        const played = MATCHES.filter(m=>matchState(m)!=="future").length;
+        const jpRank = GROUPS.F.findIndex(t=>t.n==="日本")+1;
+        const jpPts = (GROUPS.F.find(t=>t.n==="日本").s||[0,0,0,0,0,0])[5];
+        return `<div class="hero-stats">
+          <a href="schedule.html"><div class="sl">TODAY</div><div class="sv">${todayCount}<small>試合</small></div><div class="ss">今日のW杯</div></a>
+          <a href="schedule.html"><div class="sl">MATCHES</div><div class="sv">${played}<small>/104</small></div><div class="ss">大会消化</div></a>
+          <a href="standings.html"><div class="sl">GROUP F</div><div class="sv">${jpRank}<small>位</small></div><div class="ss">日本・勝点${jpPts}</div></a>
+        </div>`;
+      })()}
+    </div>
+  </div>`;
+  bindCalButtons(document.getElementById("hero"));
+  // カウントダウン（使いやすさ施策：参考サイトには無い）
+  function tick(){
+    const diff = (new Date(heroM.kick).getTime()-Date.now())/1000;
+    const cd = document.getElementById("cd");
+    if(!cd) return;
+    if(diff<=0){ cd.innerHTML = `<div style="min-width:auto;padding:4px 14px"><b style="font-size:14px">試合中・終了</b></div>`; return; }
+    const v=[["日",Math.floor(diff/86400)],["時間",Math.floor(diff%86400/3600)],["分",Math.floor(diff%3600/60)],["秒",Math.floor(diff%60)]];
+    cd.innerHTML = v.map(([l,n])=>`<div><b>${n}</b><small>${l}</small></div>`).join("");
+  }
+  tick(); setInterval(tick,1000);
+}
+
+// ===== 直近の試合（今日〜3日分）=====
+const todayKey = new Date(Date.now()+9*3600*1000).toISOString().slice(0,10);
+const days = [...new Set(MATCHES.map(m=>m.kick.slice(0,10)))].sort().filter(k=>k>=todayKey).slice(0,3);
+renderSchedule(document.getElementById("upcoming"), MATCHES.filter(m=>days.includes(m.kick.slice(0,10))));
+insertPRCards(document.getElementById("upcoming"), 2); // PR枠（2日分ごと）
+</script>
+</body>
+</html>
