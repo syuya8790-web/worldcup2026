@@ -5,6 +5,8 @@ on:
     # 3時間ごとに実行（試合結果・順位表を当日中に反映するため）
     - cron: "0 */3 * * *"
   workflow_dispatch: {}  # 手動実行ボタンも有効化
+  push:
+    branches: [main]     # コンテンツ更新のpushでも公開サイトへ自動デプロイ
 
 permissions:
   contents: write
@@ -43,3 +45,12 @@ jobs:
             git commit -m "data: 自動更新"
             git push
           fi
+
+      # Cloudflare PagesはDirect Upload運用のため、ここから直接デプロイする
+      # （Git連携の代替。secrets: CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID が必要）
+      # プロジェクト名はCloudflareダッシュボードの表記に合わせること
+      - name: Cloudflare Pagesへデプロイ
+        run: npx --yes wrangler pages deploy . --project-name=worldcup2026-5hz --branch=main
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
